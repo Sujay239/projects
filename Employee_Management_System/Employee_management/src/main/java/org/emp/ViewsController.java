@@ -1,19 +1,11 @@
 package org.emp;//package com.spring_web.controller;
 
-//import jakarta.servlet.http.HttpServletResponse;
-//import org.apache.poi.ss.usermodel.Cell;
-//import org.apache.poi.ss.usermodel.Row;
-//import org.apache.poi.ss.usermodel.Sheet;
-//import org.apache.poi.ss.usermodel.Workbook;
-//import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-//import org.springframework.web.servlet.ModelAndView;
-//import jakarta.servlet.jsp.tagext.TagLibraryValidator;
-//import java.io.PrintWriter;
 import java.sql.*;
 import java.util.*;
 
@@ -72,6 +64,28 @@ public class ViewsController {
         preparedStatement.setInt(2, age);
         preparedStatement.setString(3, skills);
         preparedStatement.setDouble(4, salary);
+        int i = preparedStatement.executeUpdate();
+        connection.close();
+        preparedStatement.close();
+        if (i > 0) {
+            return "success";
+        } else {
+            return "error";
+        }
+    }
+
+
+    @RequestMapping(path = "/added", method = RequestMethod.POST)
+    public String added(@ModelAttribute Employee emp) throws Exception {
+        System.out.println(emp);
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/spring", "root", "admin@123");
+        String query = "Insert into employee_details(name,age,skills,salary) values (?,?,?,?)";
+        PreparedStatement preparedStatement = connection.prepareStatement(query);
+        preparedStatement.setString(1, emp.getName());
+        preparedStatement.setInt(2,emp.getAge());
+        preparedStatement.setString(3,emp.getSkills());
+        preparedStatement.setDouble(4,emp.getSalary());
         int i = preparedStatement.executeUpdate();
         connection.close();
         preparedStatement.close();
